@@ -5,791 +5,114 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
 <title>Baromètre des délais de paiement — FRBTP Guyane</title>
 <style>
-:root{
-  --bleu:#0b3d63;
-  --bleu-fonce:#062a44;
-  --orange:#ff6a13;
-  --orange-fonce:#e05a00;
-  --gris-clair:#f4f6f8;
-  --gris:#6b7684;
-  --rouge:#c0392b;
-  --vert:#1e8449;
-  --radius:12px;
-}
+:root{--bleu:#0b3d63;--bleu-fonce:#062a44;--orange:#ff6a13;--orange-fonce:#e05a00;--gris-clair:#f4f6f8;--gris:#6b7684;--rouge:#c0392b;--radius:12px;}
 *{box-sizing:border-box;margin:0;padding:0;}
-html,body{
-  font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif;
-  background:var(--gris-clair);
-  color:#1c2733;
-  height:100%;
-  overscroll-behavior:none;
-}
-body{
-  display:flex;
-  flex-direction:column;
-  min-height:100vh;
-}
-header.app-header{
-  background:var(--bleu);
-  color:#fff;
-  padding:10px 16px;
-  display:flex;
-  align-items:center;
-  gap:10px;
-  flex-shrink:0;
-}
-header.app-header .logo{
-  width:38px;height:38px;border-radius:8px;
-  background:var(--orange);
-  display:flex;align-items:center;justify-content:center;
-  font-weight:800;font-size:13px;color:#fff;
-}
-header.app-header .title{font-weight:700;font-size:15px;line-height:1.2;}
+html,body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif;background:var(--gris-clair);color:#1c2733;height:100%;}
+body{display:flex;flex-direction:column;min-height:100vh;}
+header.app-header{background:var(--bleu);color:#fff;padding:10px 16px;display:flex;align-items:center;gap:10px;}
+header.app-header .logo{width:38px;height:38px;border-radius:8px;background:var(--orange);display:flex;align-items:center;justify-content:center;font-weight:800;font-size:13px;color:#fff;}
+header.app-header .title{font-weight:700;font-size:15px;}
 header.app-header .sub{font-size:11px;opacity:.85;}
-
-.progress-wrap{
-  height:6px;background:#dfe6ec;flex-shrink:0;
-}
-.progress-bar{
-  height:100%;background:var(--orange);width:0%;
-  transition:width .35s ease;
-}
-
-main{
-  flex:1;
-  display:flex;
-  flex-direction:column;
-  max-width:640px;
-  width:100%;
-  margin:0 auto;
-  padding:18px 18px 100px;
-  position:relative;
-}
-
-.screen{display:none;flex-direction:column;gap:16px;animation:fadeIn .35s ease;}
+.progress-wrap{height:6px;background:#dfe6ec;}
+.progress-bar{height:100%;background:var(--orange);width:0%;transition:width .35s ease;}
+main{flex:1;display:flex;flex-direction:column;max-width:640px;width:100%;margin:0 auto;padding:18px 18px 100px;}
+.screen{display:none;flex-direction:column;gap:16px;}
 .screen.active{display:flex;}
-@keyframes fadeIn{from{opacity:0;transform:translateY(8px);}to{opacity:1;transform:translateY(0);}}
-
 h1.step-title{font-size:20px;color:var(--bleu-fonce);font-weight:800;}
 p.step-desc{font-size:13.5px;color:var(--gris);line-height:1.4;}
-
 .field-group{display:flex;flex-direction:column;gap:6px;}
 .field-group label{font-size:13px;font-weight:600;color:var(--bleu-fonce);}
-.field-group input[type=text],
-.field-group input[type=number],
-.field-group input[type=date],
-.field-group input[type=email],
-.field-group input[type=tel],
-.field-group select{
-  border:1.5px solid #c9d4dd;
-  border-radius:var(--radius);
-  padding:12px 14px;
-  font-size:16px;
-  background:#fff;
-  outline:none;
-  width:100%;
-}
+.field-group input,.field-group select{border:1.5px solid #c9d4dd;border-radius:var(--radius);padding:12px 14px;font-size:16px;background:#fff;outline:none;width:100%;}
 .field-group input:focus,.field-group select:focus{border-color:var(--orange);}
-
 .choice-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
 .choice-grid.single-col{grid-template-columns:1fr;}
-.choice-btn{
-  border:1.5px solid #c9d4dd;
-  background:#fff;
-  border-radius:var(--radius);
-  padding:14px 12px;
-  font-size:14px;
-  font-weight:600;
-  text-align:left;
-  cursor:pointer;
-  color:#1c2733;
-  transition:.15s;
-}
-.choice-btn:active{transform:scale(.98);}
-.choice-btn.selected{
-  border-color:var(--orange);
-  background:#fff3ea;
-  color:var(--orange-fonce);
-}
-.choice-btn small{display:block;font-weight:400;color:var(--gris);font-size:11.5px;margin-top:2px;}
-
-.checkbox-row{
-  display:flex;align-items:flex-start;gap:10px;
-  border:1.5px solid #c9d4dd;border-radius:var(--radius);
-  padding:12px 14px;cursor:pointer;font-size:13.5px;
-}
-.checkbox-row input{margin-top:2px;width:18px;height:18px;flex-shrink:0;}
+.choice-btn{border:1.5px solid #c9d4dd;background:#fff;border-radius:var(--radius);padding:14px 12px;font-size:14px;font-weight:600;text-align:left;cursor:pointer;color:#1c2733;}
+.choice-btn.selected{border-color:var(--orange);background:#fff3ea;color:var(--orange-fonce);}
+.checkbox-row{display:flex;align-items:flex-start;gap:10px;border:1.5px solid #c9d4dd;border-radius:var(--radius);padding:12px 14px;cursor:pointer;font-size:13.5px;}
 .checkbox-row.selected{border-color:var(--orange);background:#fff3ea;}
-
-.tooltip-box{
-  background:#eaf2f8;border-left:4px solid var(--bleu);
-  padding:10px 12px;font-size:12.5px;color:var(--bleu-fonce);
-  border-radius:8px;line-height:1.4;
-}
-
-.calc-panel{
-  background:#fff;border:1.5px solid #c9d4dd;border-radius:var(--radius);
-  padding:16px;display:flex;flex-direction:column;gap:8px;
-}
+.tooltip-box{background:#eaf2f8;border-left:4px solid var(--bleu);padding:10px 12px;font-size:12.5px;color:var(--bleu-fonce);border-radius:8px;line-height:1.4;}
+.calc-panel{background:#fff;border:1.5px solid #c9d4dd;border-radius:var(--radius);padding:16px;display:flex;flex-direction:column;gap:8px;}
 .calc-panel .row{display:flex;justify-content:space-between;font-size:13px;color:var(--gris);}
-.calc-panel .row b{color:#1c2733;font-weight:600;}
-.calc-panel .total-line{
-  border-top:1.5px dashed #c9d4dd;padding-top:10px;margin-top:4px;
-  display:flex;justify-content:space-between;align-items:baseline;
-}
+.calc-panel .total-line{border-top:1.5px dashed #c9d4dd;padding-top:10px;display:flex;justify-content:space-between;}
 .calc-panel .total-line .amount{font-size:24px;font-weight:800;color:var(--orange-fonce);}
-.calc-panel .badge-legal{
-  display:inline-block;background:var(--bleu);color:#fff;font-size:10.5px;
-  padding:2px 8px;border-radius:20px;margin-top:4px;
-}
-.calc-panel .provisoire{
-  font-size:11px;color:var(--rouge);font-weight:700;text-transform:uppercase;letter-spacing:.4px;
-}
-
+.calc-panel .badge-legal{display:inline-block;background:var(--bleu);color:#fff;font-size:10.5px;padding:2px 8px;border-radius:20px;}
+.calc-panel .provisoire{font-size:11px;color:var(--rouge);font-weight:700;text-transform:uppercase;}
 .inline-check{display:flex;align-items:center;gap:8px;font-size:13px;color:var(--bleu-fonce);font-weight:600;}
-.inline-check input{width:18px;height:18px;}
-
-nav.step-nav{
-  position:fixed;bottom:0;left:0;right:0;
-  background:#fff;border-top:1px solid #e1e6ea;
-  display:flex;gap:10px;padding:12px 18px;
-  max-width:640px;margin:0 auto;
-  box-shadow:0 -4px 14px rgba(0,0,0,.05);
-}
-nav.step-nav button{
-  flex:1;border:none;border-radius:var(--radius);
-  padding:14px;font-size:15px;font-weight:700;cursor:pointer;
-}
+nav.step-nav{position:fixed;bottom:0;left:0;right:0;background:#fff;border-top:1px solid #e1e6ea;display:flex;gap:10px;padding:12px 18px;max-width:640px;margin:0 auto;}
+nav.step-nav button{flex:1;border:none;border-radius:var(--radius);padding:14px;font-size:15px;font-weight:700;cursor:pointer;}
 .btn-primary{background:var(--orange);color:#fff;}
-.btn-primary:active{background:var(--orange-fonce);}
 .btn-secondary{background:#eef1f4;color:var(--bleu-fonce);flex:.5;}
-.btn-primary:disabled{background:#f0c39c;cursor:not-allowed;}
-
-.hero{
-  display:flex;flex-direction:column;gap:18px;align-items:flex-start;
-}
-.hero .kpi{
-  background:var(--bleu);color:#fff;border-radius:var(--radius);
-  padding:14px 16px;font-size:13px;line-height:1.5;
-}
-.hero .kpi b{color:var(--orange);font-size:16px;}
-.hero .start-btn{
-  background:var(--orange);color:#fff;border:none;border-radius:var(--radius);
-  padding:16px 22px;font-size:16px;font-weight:800;cursor:pointer;width:100%;
-}
-
+.hero{display:flex;flex-direction:column;gap:18px;align-items:flex-start;}
+.hero .kpi{background:var(--bleu);color:#fff;border-radius:var(--radius);padding:14px 16px;font-size:13px;line-height:1.5;}
+.hero .start-btn{background:var(--orange);color:#fff;border:none;border-radius:var(--radius);padding:16px 22px;font-size:16px;font-weight:800;cursor:pointer;width:100%;}
 .result-screen{align-items:center;text-align:center;}
 .result-screen .big-amount{font-size:40px;font-weight:900;color:var(--orange-fonce);}
-.result-screen .sub-amount{font-size:13px;color:var(--gris);}
-.result-card{
-  background:#fff;border:1.5px solid #c9d4dd;border-radius:var(--radius);
-  padding:20px;width:100%;text-align:left;
-}
-.share-note{font-size:12px;color:var(--gris);line-height:1.5;}
-.restart-link{font-size:13px;color:var(--bleu);font-weight:700;cursor:pointer;text-decoration:underline;background:none;border:none;}
-
+.result-card{background:#fff;border:1.5px solid #c9d4dd;border-radius:var(--radius);padding:20px;width:100%;text-align:left;}
+.restart-link{font-size:13px;color:var(--bleu);font-weight:700;text-decoration:underline;background:none;border:none;cursor:pointer;}
 .legend-error{color:var(--rouge);font-size:12px;font-weight:600;}
-
-@media (max-width:400px){
-  .choice-grid{grid-template-columns:1fr;}
-}
 </style>
 </head>
 <body>
-
-<header class="app-header">
-  <div class="logo">FRBTP</div>
-  <div>
-    <div class="title">Baromètre des délais de paiement</div>
-    <div class="sub">Fédération Régionale du BTP de Guyane</div>
-  </div>
-</header>
+<header class="app-header"><div class="logo">FRBTP</div><div><div class="title">Baromètre des délais de paiement</div><div class="sub">Fédération Régionale du BTP de Guyane</div></div></header>
 <div class="progress-wrap"><div class="progress-bar" id="progressBar"></div></div>
-
 <main>
-
-  <!-- ECRAN 0 : ACCUEIL -->
-  <section class="screen active" data-screen="0">
-    <div class="hero">
-      <h1 class="step-title">En Guyane, certains délais de paiement dépassent plusieurs mois.</h1>
-      <p class="step-desc">Découvrez en 3 minutes ce que cela vous coûte réellement — et ce que vous pourriez légalement réclamer.</p>
-      <div class="kpi">
-        La commande publique représente <b>plus de 65%</b> de l'activité économique en Guyane. Certains délais atteignent <b>1 à 2 ans</b>, fragilisant la trésorerie des entreprises adhérentes.
-      </div>
-      <p class="step-desc">
-        Ce baromètre, issu de la <b>Charte départementale relative aux délais de paiement et à la commande publique</b> signée par la FRBTP en octobre 2025, permet d'objectiver la situation réelle des entreprises guyanaises et de calculer automatiquement les intérêts moratoires légalement dus.
-      </p>
-      <p class="step-desc" style="font-size:11.5px;">Sans création de compte. Réponses anonymisées à usage statistique. Durée : 3 à 4 minutes.</p>
-      <button class="start-btn" onclick="goTo(1)">Commencer →</button>
-    </div>
-  </section>
-
-  <!-- ECRAN 1 : PROFIL ENTREPRISE -->
-  <section class="screen" data-screen="1">
-    <h1 class="step-title">Votre entreprise</h1>
-    <p class="step-desc">Deux questions rapides pour situer votre activité.</p>
-
-    <div class="field-group">
-      <label>Secteur d'activité</label>
-      <div class="choice-grid" id="secteurGrid"></div>
-    </div>
-
-    <div class="field-group">
-      <label>Taille de l'entreprise</label>
-      <div class="choice-grid single-col" id="tailleGrid"></div>
-    </div>
-  </section>
-
-  <!-- ECRAN 2 : DONNEUR D'ORDRE -->
-  <section class="screen" data-screen="2">
-    <h1 class="step-title">Le donneur d'ordre concerné</h1>
-    <p class="step-desc">Vous pourrez répondre plusieurs fois pour déclarer plusieurs factures / clients différents.</p>
-
-    <div class="field-group">
-      <label>Type de client pour cette facture</label>
-      <div class="choice-grid single-col" id="clientGrid"></div>
-    </div>
-
-    <div class="field-group">
-      <label>Nom du donneur d'ordre <span style="font-weight:400;color:var(--gris);">(facultatif, usage interne)</span></label>
-      <input type="text" id="nomDonneur" placeholder="Ex : Commune de..., Société...">
-    </div>
-  </section>
-
-  <!-- ECRAN 3 : FACTURE ET CALCUL -->
-  <section class="screen" data-screen="3">
-    <h1 class="step-title">La facture concernée</h1>
-
-    <div class="field-group">
-      <label>Montant HT de la facture (€)</label>
-      <input type="number" id="montantHT" min="0" step="0.01" placeholder="Ex : 15000">
-    </div>
-
-    <div class="field-group">
-      <label>Date de réception de la facture par le client</label>
-      <input type="date" id="dateReception">
-    </div>
-
-    <div class="field-group">
-      <label>Délai contractuel / légal applicable</label>
-      <select id="delaiType">
-        <option value="30">30 jours nets (marché public)</option>
-        <option value="45fdm">45 jours fin de mois (B2B privé)</option>
-        <option value="60">60 jours nets</option>
-        <option value="50eps">50 jours (établissement public de santé)</option>
-        <option value="autre">Autre délai (préciser)</option>
-      </select>
-    </div>
-
-    <div class="field-group" id="delaiAutreWrap" style="display:none;">
-      <label>Nombre de jours (délai personnalisé)</label>
-      <input type="number" id="delaiAutreJours" min="1" placeholder="Ex : 90">
-    </div>
-
-    <div class="field-group">
-      <label>Date d'échéance (calculée automatiquement, modifiable)</label>
-      <input type="date" id="dateEcheance">
-    </div>
-
-    <div class="tooltip-box">
-      💡 Ces intérêts moratoires sont dus <b>de plein droit, sans mise en demeure préalable</b> (article L.441-10 du Code de commerce pour le privé / article R.2192-31 du Code de la commande publique pour les marchés publics).
-    </div>
-
-    <div class="field-group">
-      <label>Date de paiement effectif</label>
-      <input type="date" id="datePaiement">
-      <label class="inline-check" style="margin-top:4px;">
-        <input type="checkbox" id="toujoursImpaye"> Toujours impayé à ce jour
-      </label>
-    </div>
-
-    <div class="calc-panel" id="calcPanel">
-      <div class="row"><span>Nombre de jours de retard</span><b id="outJours">0 j</b></div>
-      <div class="row"><span>Taux d'intérêt annuel appliqué</span><b id="outTaux">—</b></div>
-      <div><span class="badge-legal" id="outBaseLegale">—</span></div>
-      <div class="row"><span>Intérêts moratoires</span><b id="outInterets">0,00 €</b></div>
-      <div class="row"><span>Indemnité forfaitaire de recouvrement</span><b>40,00 €</b></div>
-      <div class="total-line">
-        <span id="outStatutLabel">Total réclamable</span>
-        <span class="amount" id="outTotal">0,00 €</span>
-      </div>
-      <div class="provisoire" id="outProvisoire" style="display:none;">Montant provisoire — en cours d'accumulation</div>
-      <div style="font-size:11px;color:var(--gris);" id="outDetailFormule"></div>
-    </div>
-  </section>
-
-  <!-- ECRAN 4 : REPETITION ET CONTEXTE -->
-  <section class="screen" data-screen="4">
-    <h1 class="step-title">Répétition et contexte</h1>
-
-    <div class="field-group">
-      <label>Fréquence des retards sur les 12 derniers mois avec ce type de client</label>
-      <div class="choice-grid single-col" id="freqGrid"></div>
-    </div>
-
-    <div class="field-group">
-      <label>Avez-vous déjà réclamé des pénalités de retard à ce client ?</label>
-      <div class="choice-grid" id="penalitesGrid"></div>
-    </div>
-
-    <div class="field-group">
-      <label>Conséquences subies (plusieurs choix possibles)</label>
-      <div id="consequencesList" style="display:flex;flex-direction:column;gap:8px;"></div>
-    </div>
-  </section>
-
-  <!-- ECRAN 5 : COORDONNEES -->
-  <section class="screen" data-screen="5">
-    <h1 class="step-title">Vos coordonnées</h1>
-    <p class="step-desc">Totalement facultatif. Utile uniquement si vous souhaitez être accompagné par la FRBTP.</p>
-
-    <div class="field-group">
-      <label>Email</label>
-      <input type="email" id="contactEmail" placeholder="vous@entreprise.fr">
-    </div>
-    <div class="field-group">
-      <label>Téléphone</label>
-      <input type="tel" id="contactTel" placeholder="0694 00 00 00">
-    </div>
-
-    <label class="checkbox-row" id="consentRow">
-      <input type="checkbox" id="consentement">
-      <span>J'accepte que ces données soient utilisées par la FRBTP à des fins statistiques anonymisées, dans le cadre du suivi de la Charte départementale relative aux délais de paiement.</span>
-    </label>
-    <div class="legend-error" id="consentError" style="display:none;">Merci de cocher cette case pour valider votre réponse.</div>
-  </section>
-
-  <!-- ECRAN RESULTAT -->
-  <section class="screen result-screen" data-screen="6">
-    <h1 class="step-title">Votre résultat</h1>
-    <div class="sub-amount" id="resultStatut">Montant total réclamable auprès de ce donneur d'ordre</div>
-    <div class="big-amount" id="resultAmount">0,00 €</div>
-
-    <div class="result-card">
-      <div class="row" style="display:flex;justify-content:space-between;margin-bottom:6px;"><span>Retard constaté</span><b id="resJours">0 jours</b></div>
-      <div class="row" style="display:flex;justify-content:space-between;margin-bottom:6px;"><span>Intérêts moratoires</span><b id="resInterets">0,00 €</b></div>
-      <div class="row" style="display:flex;justify-content:space-between;margin-bottom:6px;"><span>Indemnité forfaitaire</span><b>40,00 €</b></div>
-      <div style="font-size:11.5px;color:var(--gris);margin-top:8px;" id="resDetail"></div>
-    </div>
-
-    <p class="share-note">
-      La FRBTP peut vous accompagner dans vos démarches de réclamation auprès des donneurs d'ordre publics, y compris via le <b>Médiateur des entreprises</b>. Ces données alimentent le suivi des engagements pris dans la Charte départementale des délais de paiement.
-    </p>
-
-    <button class="restart-link" onclick="restartForNewInvoice()">Déclarer une autre facture / un autre client →</button>
-  </section>
-
+<section class="screen active" data-screen="0"><div class="hero"><h1 class="step-title">En Guyane, certains délais de paiement dépassent plusieurs mois.</h1><p class="step-desc">Découvrez en 3 minutes ce que cela vous coûte réellement — et ce que vous pourriez légalement réclamer.</p><div class="kpi">La commande publique représente <b>plus de 65%</b> de l'activité économique en Guyane. Certains délais atteignent <b>1 à 2 ans</b>.</div><button class="start-btn" onclick="goTo(1)">Commencer →</button></div></section>
+<section class="screen" data-screen="1"><h1 class="step-title">Votre entreprise</h1><div class="field-group"><label>Secteur d'activité</label><div class="choice-grid" id="secteurGrid"></div></div><div class="field-group"><label>Taille de l'entreprise</label><div class="choice-grid single-col" id="tailleGrid"></div></div></section>
+<section class="screen" data-screen="2"><h1 class="step-title">Le donneur d'ordre concerné</h1><div class="field-group"><label>Type de client</label><div class="choice-grid single-col" id="clientGrid"></div></div><div class="field-group"><label>Nom du donneur d'ordre (facultatif)</label><input type="text" id="nomDonneur"></div></section>
+<section class="screen" data-screen="3"><h1 class="step-title">La facture concernée</h1><div class="field-group"><label>Montant HT (€)</label><input type="number" id="montantHT" min="0" step="0.01"></div><div class="field-group"><label>Date de réception</label><input type="date" id="dateReception"></div><div class="field-group"><label>Délai applicable</label><select id="delaiType"><option value="30">30 jours nets (marché public)</option><option value="45fdm">45 jours fin de mois (B2B privé)</option><option value="60">60 jours nets</option><option value="50eps">50 jours (EPS)</option><option value="autre">Autre</option></select></div><div class="field-group" id="delaiAutreWrap" style="display:none;"><label>Jours personnalisés</label><input type="number" id="delaiAutreJours" min="1"></div><div class="field-group"><label>Échéance</label><input type="date" id="dateEcheance"></div><div class="tooltip-box">💡 Intérêts dus de plein droit, sans mise en demeure (art. L.441-10 C. com. / R.2192-31 CCP).</div><div class="field-group"><label>Date de paiement effectif</label><input type="date" id="datePaiement"><label class="inline-check"><input type="checkbox" id="toujoursImpaye"> Toujours impayé</label></div><div class="calc-panel" id="calcPanel"><div class="row"><span>Jours de retard</span><b id="outJours">0 j</b></div><div class="row"><span>Taux annuel</span><b id="outTaux">—</b></div><div><span class="badge-legal" id="outBaseLegale">—</span></div><div class="row"><span>Intérêts moratoires</span><b id="outInterets">0,00 €</b></div><div class="row"><span>Indemnité forfaitaire</span><b>40,00 €</b></div><div class="total-line"><span id="outStatutLabel">Total réclamable</span><span class="amount" id="outTotal">0,00 €</span></div><div class="provisoire" id="outProvisoire" style="display:none;">Montant provisoire</div><div style="font-size:11px;color:var(--gris);" id="outDetailFormule"></div></div></section>
+<section class="screen" data-screen="4"><h1 class="step-title">Répétition et contexte</h1><div class="field-group"><label>Fréquence des retards</label><div class="choice-grid single-col" id="freqGrid"></div></div><div class="field-group"><label>Pénalités déjà réclamées ?</label><div class="choice-grid" id="penalitesGrid"></div></div><div class="field-group"><label>Conséquences subies</label><div id="consequencesList" style="display:flex;flex-direction:column;gap:8px;"></div></div></section>
+<section class="screen" data-screen="5"><h1 class="step-title">Vos coordonnées</h1><div class="field-group"><label>Email</label><input type="email" id="contactEmail"></div><div class="field-group"><label>Téléphone</label><input type="tel" id="contactTel"></div><label class="checkbox-row" id="consentRow"><input type="checkbox" id="consentement"><span>J'accepte l'usage statistique anonymisé par la FRBTP.</span></label><div class="legend-error" id="consentError" style="display:none;">Merci de cocher cette case.</div></section>
+<section class="screen result-screen" data-screen="6"><h1 class="step-title">Votre résultat</h1><div class="sub-amount" id="resultStatut">Montant total réclamable</div><div class="big-amount" id="resultAmount">0,00 €</div><div class="result-card"><div class="row" style="display:flex;justify-content:space-between;"><span>Retard constaté</span><b id="resJours">0 jours</b></div><div class="row" style="display:flex;justify-content:space-between;"><span>Intérêts moratoires</span><b id="resInterets">0,00 €</b></div><div class="row" style="display:flex;justify-content:space-between;"><span>Indemnité forfaitaire</span><b>40,00 €</b></div><div style="font-size:11.5px;color:var(--gris);" id="resDetail"></div></div><p class="share-note">La FRBTP peut vous accompagner via le Médiateur des entreprises.</p><button class="restart-link" onclick="restartForNewInvoice()">Déclarer une autre facture →</button></section>
 </main>
-
-<nav class="step-nav" id="stepNav">
-  <button class="btn-secondary" id="btnBack" onclick="prevStep()">Retour</button>
-  <button class="btn-primary" id="btnNext" onclick="nextStep()">Continuer</button>
-</nav>
-
+<nav class="step-nav" id="stepNav"><button class="btn-secondary" id="btnBack" onclick="prevStep()">Retour</button><button class="btn-primary" id="btnNext" onclick="nextStep()">Continuer</button></nav>
 <script>
-/* =====================================================
-   CONFIG TAUX — chargé depuis taux.json (fallback inline)
-   ===================================================== */
-const TAUX_FALLBACK = {
-  "2026-S1": { refi_bce: 2.15, taux_prive: 12.15, taux_public: 10.15, date_debut: "2026-01-01", date_fin: "2026-06-30" },
-  "2026-S2": { refi_bce: 2.40, taux_prive: 12.40, taux_public: 10.40, date_debut: "2026-07-01", date_fin: "2026-12-31" }
-};
-let TAUX_TABLE = TAUX_FALLBACK;
-
-fetch('./taux.json').then(r => { if(!r.ok) throw 0; return r.json(); })
-  .then(data => { TAUX_TABLE = data; recalc(); })
-  .catch(() => { /* garde le fallback embarqué */ });
-
-const PLANCHER_PRIVE = 8.25; // 3x taux légal, article L.441-10
-const INDEMNITE_FORFAITAIRE = 40;
-
-/* =====================================================
-   DONNEES DU FORMULAIRE
-   ===================================================== */
-const state = {
-  secteur: null, taille: null,
-  type_client: null, nom_donneur: "",
-  montant_ht: null, date_reception: null, delai_type: "30", delai_autre_jours: null,
-  date_echeance: null, date_paiement: null, toujours_impaye: false,
-  frequence_retards: null, penalites_reclamees: null, consequences: [],
-  email: "", telephone: "", consentement: false
-};
-
-const SECTEURS = [
-  ["gros_oeuvre","Gros œuvre"],["second_oeuvre","Second œuvre"],["tp","Travaux publics"],
-  ["negoce","Négoce matériaux"],["bureau_etudes","Bureau d'études"],["autre","Autre"]
-];
-const TAILLES = [
-  ["tpe","TPE — moins de 10 salariés"],["pme","PME — 10 à 49 salariés"],["eti","ETI — 50 salariés et plus"]
-];
-const CLIENTS = [
-  ["etat","État / services déconcentrés","marche_public"],
-  ["ctg","Collectivité Territoriale de Guyane (CTG)","marche_public"],
-  ["commune_epci","Commune / EPCI","marche_public"],
-  ["bailleur","Bailleur social / OPH","marche_public"],
-  ["eps","Établissement public de santé","marche_public"],
-  ["grand_compte","Grand compte privé","b2b_prive"],
-  ["particulier","Particulier","b2b_prive"],
-  ["sous_traitance","Sous-traitance BTP","b2b_prive"]
-];
-const FREQUENCES = [
-  ["jamais","Jamais"],["occasionnel","Occasionnel"],["systematique","Systématique"]
-];
-const PENALITES = [["oui","Oui"],["non","Non"],["nsp","Ne sait pas"]];
-const CONSEQUENCES = [
-  ["affacturage","Recours à l'affacturage"],
-  ["decouvert","Découvert bancaire"],
-  ["retard_fournisseurs","Retard de paiement fournisseurs / salaires"],
-  ["report_investissement","Report d'investissement"],
-  ["aucune","Aucune"]
-];
-
-function renderChoiceGrid(containerId, items, field, valueIndex=0, labelIndex=1){
-  const el = document.getElementById(containerId);
-  el.innerHTML = "";
-  items.forEach(item => {
-    const val = item[valueIndex], label = item[labelIndex];
-    const btn = document.createElement("button");
-    btn.className = "choice-btn";
-    btn.type = "button";
-    btn.textContent = label;
-    btn.onclick = () => {
-      state[field] = val;
-      if(field === "type_client"){
-        const found = CLIENTS.find(c => c[0] === val);
-        state.regime_juridique = found[2];
-        applyDefaultDelai(val, state.regime_juridique);
-      }
-      [...el.children].forEach(c => c.classList.remove("selected"));
-      btn.classList.add("selected");
-      recalc();
-    };
-    el.appendChild(btn);
-  });
-}
-
-function renderConsequences(){
-  const el = document.getElementById("consequencesList");
-  el.innerHTML = "";
-  CONSEQUENCES.forEach(([val,label]) => {
-    const row = document.createElement("label");
-    row.className = "checkbox-row";
-    row.innerHTML = `<input type="checkbox" data-val="${val}"><span>${label}</span>`;
-    const input = row.querySelector("input");
-    input.onchange = () => {
-      if(val === "aucune" && input.checked){
-        state.consequences = ["aucune"];
-        [...el.querySelectorAll("input")].forEach(i => { if(i !== input){ i.checked=false; } });
-        [...el.querySelectorAll(".checkbox-row")].forEach(r => r.classList.remove("selected"));
-        row.classList.add("selected");
-      } else {
-        const aucuneInput = el.querySelector('input[data-val="aucune"]');
-        if(input.checked){
-          aucuneInput.checked = false;
-          aucuneInput.closest(".checkbox-row").classList.remove("selected");
-          state.consequences = state.consequences.filter(v => v !== "aucune");
-          state.consequences.push(val);
-          row.classList.add("selected");
-        } else {
-          state.consequences = state.consequences.filter(v => v !== val);
-          row.classList.remove("selected");
-        }
-      }
-    };
-    el.appendChild(row);
-  });
-}
-
-renderChoiceGrid("secteurGrid", SECTEURS, "secteur");
-renderChoiceGrid("tailleGrid", TAILLES, "taille");
-renderChoiceGrid("clientGrid", CLIENTS, "type_client");
-renderChoiceGrid("freqGrid", FREQUENCES, "frequence_retards");
-renderChoiceGrid("penalitesGrid", PENALITES, "penalites_reclamees");
-renderConsequences();
-
-/* =====================================================
-   NAVIGATION
-   ===================================================== */
-let currentScreen = 0;
-
-function updateProgress(){
-  const pct = currentScreen === 0 ? 0 : Math.min(100, (currentScreen / 5) * 100);
-  document.getElementById("progressBar").style.width = pct + "%";
-}
-
-function goTo(n){
-  document.querySelectorAll(".screen").forEach(s => s.classList.remove("active"));
-  document.querySelector(`.screen[data-screen="${n}"]`).classList.add("active");
-  currentScreen = n;
-  updateProgress();
-  const nav = document.getElementById("stepNav");
-  nav.style.display = (n === 0 || n === 6) ? "none" : "flex";
-  document.getElementById("btnBack").style.display = (n <= 1) ? "none" : "block";
-  document.getElementById("btnNext").textContent = (n === 5) ? "Voir mon résultat →" : "Continuer";
-  window.scrollTo(0,0);
-}
-
-function validateStep(n){
-  switch(n){
-    case 1:
-      if(!state.secteur || !state.taille){ alert("Merci de compléter les deux champs."); return false; }
-      return true;
-    case 2:
-      if(!state.type_client){ alert("Merci de sélectionner un type de client."); return false; }
-      return true;
-    case 3:
-      if(!state.montant_ht || state.montant_ht <= 0){ alert("Merci d'indiquer un montant HT valide."); return false; }
-      if(!state.date_reception){ alert("Merci d'indiquer la date de réception de la facture."); return false; }
-      if(!state.date_echeance){ alert("Merci d'indiquer la date d'échéance."); return false; }
-      if(!state.toujours_impaye && !state.date_paiement){ alert("Indiquez la date de paiement effectif, ou cochez 'toujours impayé'."); return false; }
-      return true;
-    case 4:
-      return true;
-    case 5:
-      if(!state.consentement){
-        document.getElementById("consentError").style.display = "block";
-        return false;
-      }
-      return true;
-    default: return true;
-  }
-}
-
-function nextStep(){
-  if(!validateStep(currentScreen)) return;
-  if(currentScreen === 5){ submitResponse(); return; }
-  goTo(currentScreen + 1);
-}
-function prevStep(){ goTo(currentScreen - 1); }
-
-/* =====================================================
-   LOGIQUE ECRAN 3 — dates & délais
-   ===================================================== */
-function applyDefaultDelai(typeClient, regime){
-  const select = document.getElementById("delaiType");
-  if(typeClient === "eps") select.value = "50eps";
-  else if(regime === "marche_public") select.value = "30";
-  else select.value = "45fdm";
-  onDelaiChange();
-}
-
-function parseDate(str){ if(!str) return null; const [y,m,d]=str.split("-").map(Number); return new Date(Date.UTC(y,m-1,d)); }
-function fmtDate(dt){ return dt.toISOString().slice(0,10); }
-function addDays(dt, n){ const d=new Date(dt); d.setUTCDate(d.getUTCDate()+n); return d; }
-function endOfMonth(dt){ return new Date(Date.UTC(dt.getUTCFullYear(), dt.getUTCMonth()+1, 0)); }
-
-function computeEcheance(){
-  const reception = parseDate(state.date_reception);
-  if(!reception) return null;
-  const type = state.delai_type;
-  if(type === "30") return addDays(reception, 30);
-  if(type === "60") return addDays(reception, 60);
-  if(type === "50eps") return addDays(reception, 50);
-  if(type === "45fdm") return endOfMonth(addDays(reception, 45));
-  if(type === "autre") return addDays(reception, Number(state.delai_autre_jours || 0));
-  return reception;
-}
-
-function onDelaiChange(){
-  document.getElementById("delaiAutreWrap").style.display = state.delai_type === "autre" ? "flex" : "none";
-  const ech = computeEcheance();
-  if(ech){
-    state.date_echeance = fmtDate(ech);
-    document.getElementById("dateEcheance").value = state.date_echeance;
-  }
-  recalc();
-}
-
-document.getElementById("montantHT").addEventListener("input", e => { state.montant_ht = parseFloat(e.target.value)||0; recalc(); });
-document.getElementById("dateReception").addEventListener("change", e => { state.date_reception = e.target.value; onDelaiChange(); });
-document.getElementById("delaiType").addEventListener("change", e => { state.delai_type = e.target.value; onDelaiChange(); });
-document.getElementById("delaiAutreJours").addEventListener("input", e => { state.delai_autre_jours = e.target.value; onDelaiChange(); });
-document.getElementById("dateEcheance").addEventListener("change", e => { state.date_echeance = e.target.value; recalc(); });
-document.getElementById("datePaiement").addEventListener("change", e => { state.date_paiement = e.target.value; recalc(); });
-document.getElementById("toujoursImpaye").addEventListener("change", e => {
-  state.toujours_impaye = e.target.checked;
-  document.getElementById("datePaiement").disabled = e.target.checked;
-  if(e.target.checked){ document.getElementById("datePaiement").value=""; state.date_paiement=null; }
-  recalc();
-});
-document.getElementById("nomDonneur").addEventListener("input", e => { state.nom_donneur = e.target.value; });
-document.getElementById("contactEmail").addEventListener("input", e => { state.email = e.target.value; });
-document.getElementById("contactTel").addEventListener("input", e => { state.telephone = e.target.value; });
-document.getElementById("consentement").addEventListener("change", e => {
-  state.consentement = e.target.checked;
-  document.getElementById("consentRow").classList.toggle("selected", e.target.checked);
-  document.getElementById("consentError").style.display = "none";
-});
-
-/* =====================================================
-   MOTEUR DE CALCUL DES INTERETS MORATOIRES
-   ===================================================== */
-function getSemestres(){
-  return Object.entries(TAUX_TABLE).filter(([k])=>!k.startsWith("_")).map(([key,v]) => ({
-    key, ...v, debut: parseDate(v.date_debut), fin: parseDate(v.date_fin)
-  })).sort((a,b) => a.debut - b.debut);
-}
-
-function calculerInterets({montant_ht, date_echeance, date_fin_retard, regime_juridique}){
-  const echeance = parseDate(date_echeance);
-  const finRetard = parseDate(date_fin_retard);
-  if(!echeance || !finRetard || !montant_ht) {
-    return { jours_retard:0, interets:0, indemnite:INDEMNITE_FORFAITAIRE, total:INDEMNITE_FORFAITAIRE, taux_moyen:0, base_legale:"—", detail:"" };
-  }
-  const debutRetard = addDays(echeance, 1);
-  if(finRetard < debutRetard){
-    return { jours_retard:0, interets:0, indemnite:INDEMNITE_FORFAITAIRE, total:INDEMNITE_FORFAITAIRE, taux_moyen:0, base_legale:"—", detail:"Aucun retard constaté." };
-  }
-  const semestres = getSemestres();
-  let interetsTotal = 0;
-  let joursTotal = 0;
-  const detailParts = [];
-
-  for(const s of semestres){
-    const ovStart = debutRetard > s.debut ? debutRetard : s.debut;
-    const ovEnd = finRetard < s.fin ? finRetard : s.fin;
-    if(ovStart > ovEnd) continue;
-    const jours = Math.round((ovEnd - ovStart) / 86400000) + 1;
-    let taux = regime_juridique === "marche_public" ? s.taux_public : s.taux_prive;
-    if(regime_juridique === "b2b_prive") taux = Math.max(taux, PLANCHER_PRIVE);
-    const interetsSemestre = montant_ht * (taux/100) * (jours/365);
-    interetsTotal += interetsSemestre;
-    joursTotal += jours;
-    detailParts.push(`${jours} j × ${taux.toFixed(2)}% (${s.key})`);
-  }
-
-  const baseLegale = regime_juridique === "marche_public"
-    ? "Taux BCE + 8 pts — art. R.2192-31 CCP"
-    : "Taux BCE + 10 pts (plancher 8,25%) — art. L.441-10 C. com.";
-
-  const tauxMoyen = joursTotal > 0 ? (interetsTotal * 365 * 100) / (montant_ht * joursTotal) : 0;
-
-  return {
-    jours_retard: joursTotal,
-    interets: Math.round(interetsTotal*100)/100,
-    indemnite: INDEMNITE_FORFAITAIRE,
-    total: Math.round((interetsTotal + INDEMNITE_FORFAITAIRE)*100)/100,
-    taux_moyen: Math.round(tauxMoyen*100)/100,
-    base_legale: baseLegale,
-    detail: `Retard de ${joursTotal} j (${detailParts.join(" + ")}) × montant HT ${montant_ht.toFixed(2)} € / 365 = ${interetsTotal.toFixed(2)} € + 40,00 € d'indemnité forfaitaire`
-  };
-}
-
-let lastResult = null;
-
-function recalc(){
-  if(!state.montant_ht || !state.date_echeance) {
-    document.getElementById("outJours").textContent = "0 j";
-    document.getElementById("outTaux").textContent = "—";
-    document.getElementById("outInterets").textContent = "0,00 €";
-    document.getElementById("outTotal").textContent = "0,00 €";
-    return;
-  }
-  const impaye = state.toujours_impaye || !state.date_paiement;
-  const finRetard = impaye ? fmtDate(new Date()) : state.date_paiement;
-
-  const res = calculerInterets({
-    montant_ht: state.montant_ht,
-    date_echeance: state.date_echeance,
-    date_fin_retard: finRetard,
-    regime_juridique: state.regime_juridique || "b2b_prive"
-  });
-  lastResult = res;
-
-  document.getElementById("outJours").textContent = res.jours_retard + " j";
-  document.getElementById("outTaux").textContent = res.taux_moyen.toFixed(2) + " %";
-  document.getElementById("outBaseLegale").textContent = res.base_legale;
-  document.getElementById("outInterets").textContent = res.interets.toFixed(2).replace(".", ",") + " €";
-  document.getElementById("outTotal").textContent = res.total.toFixed(2).replace(".", ",") + " €";
-  document.getElementById("outStatutLabel").textContent = impaye ? "Total réclamable (provisoire)" : "Total réclamable";
-  document.getElementById("outProvisoire").style.display = impaye ? "block" : "none";
-  document.getElementById("outDetailFormule").textContent = res.detail;
-}
-
-/* =====================================================
-   SOUMISSION
-   ===================================================== */
-const WEBconst WEBHOOK_URL = "https://script.google.com/macros/s/AKfycbwc7jhelxGJ6oKb0UarApZ6irwL9Z_MhrpesfECFnHstFEODIkyyB1_uCgXife80GnM0Q/exec";
-
-function buildPayload(){
-  const impaye = state.toujours_impaye || !state.date_paiement;
-  const finRetard = impaye ? fmtDate(new Date()) : state.date_paiement;
-  const res = calculerInterets({
-    montant_ht: state.montant_ht,
-    date_echeance: state.date_echeance,
-    date_fin_retard: finRetard,
-    regime_juridique: state.regime_juridique
-  });
-  return {
-    horodatage: new Date().toISOString(),
-    secteur: state.secteur,
-    taille_entreprise: state.taille,
-    type_client: state.type_client,
-    regime_juridique: state.regime_juridique,
-    nom_donneur: state.nom_donneur,
-    montant_ht: state.montant_ht,
-    date_reception: state.date_reception,
-    delai_type: state.delai_type,
-    delai_jours_personnalise: state.delai_autre_jours || null,
-    date_echeance: state.date_echeance,
-    date_paiement: state.toujours_impaye ? null : state.date_paiement,
-    toujours_impaye: state.toujours_impaye,
-    frequence_retards: state.frequence_retards,
-    penalites_reclamees: state.penalites_reclamees,
-    consequences: state.consequences,
-    email: state.email,
-    telephone: state.telephone,
-    consentement: state.consentement,
-    resultat_calcul: {
-      jours_retard: res.jours_retard,
-      taux_moyen_pct: res.taux_moyen,
-      base_legale: res.base_legale,
-      interets_moratoires: res.interets,
-      indemnite_forfaitaire: res.indemnite,
-      total_reclamable: res.total,
-      statut: impaye ? "provisoire" : "definitif"
-    }
-  };
-}
-
-function submitResponse(){
-  const payload = buildPayload();
-  lastResult = payload.resultat_calcul;
-
-  document.getElementById("resultAmount").textContent = lastResult.total_reclamable.toFixed(2).replace(".", ",") + " €";
-  document.getElementById("resultStatut").textContent = lastResult.statut === "provisoire"
-    ? "Montant provisoire réclamable (paiement toujours en attente)"
-    : "Montant total réclamable auprès de ce donneur d'ordre";
-  document.getElementById("resJours").textContent = lastResult.jours_retard + " jours";
-  document.getElementById("resInterets").textContent = lastResult.interets_moratoires.toFixed(2).replace(".", ",") + " €";
-  document.getElementById("resDetail").textContent = `Taux appliqué : ${lastResult.taux_moyen_pct.toFixed(2)}% — ${lastResult.base_legale}`;
-
-  goTo(6);
-
-  fetch(WEBHOOK_URL, {
-    method: "POST",
-    mode: "no-cors",
-    headers: { "Content-Type": "text/plain;charset=utf-8" },
-    body: JSON.stringify(payload)
-  }).catch(err => console.warn("Webhook indisponible (mode démo) :", err));
-}
-
-function restartForNewInvoice(){
-  state.type_client = null; state.regime_juridique = null; state.nom_donneur = "";
-  state.montant_ht = null; state.date_reception = null; state.delai_type = "30";
-  state.date_echeance = null; state.date_paiement = null; state.toujours_impaye = false;
-  document.getElementById("nomDonneur").value = "";
-  document.getElementById("montantHT").value = "";
-  document.getElementById("dateReception").value = "";
-  document.getElementById("dateEcheance").value = "";
-  document.getElementById("datePaiement").value = "";
-  document.getElementById("toujoursImpaye").checked = false;
-  document.getElementById("datePaiement").disabled = false;
-  document.querySelectorAll("#clientGrid .choice-btn").forEach(b => b.classList.remove("selected"));
-  recalc();
-  goTo(2);
-}
-
+const TAUX_FALLBACK={"2026-S1":{refi_bce:2.15,taux_prive:12.15,taux_public:10.15,date_debut:"2026-01-01",date_fin:"2026-06-30"},"2026-S2":{refi_bce:2.40,taux_prive:12.40,taux_public:10.40,date_debut:"2026-07-01",date_fin:"2026-12-31"}};
+let TAUX_TABLE=TAUX_FALLBACK;
+fetch('./taux.json').then(r=>{if(!r.ok)throw 0;return r.json();}).then(d=>{TAUX_TABLE=d;recalc();}).catch(()=>{});
+const PLANCHER_PRIVE=8.25;
+const INDEMNITE_FORFAITAIRE=40;
+const state={secteur:null,taille:null,type_client:null,nom_donneur:"",montant_ht:null,date_reception:null,delai_type:"30",delai_autre_jours:null,date_echeance:null,date_paiement:null,toujours_impaye:false,frequence_retards:null,penalites_reclamees:null,consequences:[],email:"",telephone:"",consentement:false};
+const SECTEURS=[["gros_oeuvre","Gros œuvre"],["second_oeuvre","Second œuvre"],["tp","Travaux publics"],["negoce","Négoce matériaux"],["bureau_etudes","Bureau d'études"],["autre","Autre"]];
+const TAILLES=[["tpe","TPE — moins de 10 salariés"],["pme","PME — 10 à 49 salariés"],["eti","ETI — 50 salariés et plus"]];
+const CLIENTS=[["etat","État / services déconcentrés","marche_public"],["ctg","CTG","marche_public"],["commune_epci","Commune / EPCI","marche_public"],["bailleur","Bailleur social / OPH","marche_public"],["eps","Établissement public de santé","marche_public"],["grand_compte","Grand compte privé","b2b_prive"],["particulier","Particulier","b2b_prive"],["sous_traitance","Sous-traitance BTP","b2b_prive"]];
+const FREQUENCES=[["jamais","Jamais"],["occasionnel","Occasionnel"],["systematique","Systématique"]];
+const PENALITES=[["oui","Oui"],["non","Non"],["nsp","Ne sait pas"]];
+const CONSEQUENCES=[["affacturage","Recours à l'affacturage"],["decouvert","Découvert bancaire"],["retard_fournisseurs","Retard fournisseurs/salaires"],["report_investissement","Report d'investissement"],["aucune","Aucune"]];
+function renderChoiceGrid(id,items,field){const el=document.getElementById(id);el.innerHTML="";items.forEach(item=>{const val=item[0],label=item[1];const btn=document.createElement("button");btn.className="choice-btn";btn.type="button";btn.textContent=label;btn.onclick=()=>{state[field]=val;if(field==="type_client"){const found=CLIENTS.find(c=>c[0]===val);state.regime_juridique=found[2];applyDefaultDelai(val,state.regime_juridique);}[...el.children].forEach(c=>c.classList.remove("selected"));btn.classList.add("selected");recalc();};el.appendChild(btn);});}
+function renderConsequences(){const el=document.getElementById("consequencesList");el.innerHTML="";CONSEQUENCES.forEach(([val,label])=>{const row=document.createElement("label");row.className="checkbox-row";row.innerHTML=`<input type="checkbox" data-val="${val}"><span>${label}</span>`;const input=row.querySelector("input");input.onchange=()=>{if(val==="aucune"&&input.checked){state.consequences=["aucune"];[...el.querySelectorAll("input")].forEach(i=>{if(i!==input){i.checked=false;}});[...el.querySelectorAll(".checkbox-row")].forEach(r=>r.classList.remove("selected"));row.classList.add("selected");}else{const aucuneInput=el.querySelector('input[data-val="aucune"]');if(input.checked){aucuneInput.checked=false;aucuneInput.closest(".checkbox-row").classList.remove("selected");state.consequences=state.consequences.filter(v=>v!=="aucune");state.consequences.push(val);row.classList.add("selected");}else{state.consequences=state.consequences.filter(v=>v!==val);row.classList.remove("selected");}}};el.appendChild(row);});}
+renderChoiceGrid("secteurGrid",SECTEURS,"secteur");renderChoiceGrid("tailleGrid",TAILLES,"taille");renderChoiceGrid("clientGrid",CLIENTS,"type_client");renderChoiceGrid("freqGrid",FREQUENCES,"frequence_retards");renderChoiceGrid("penalitesGrid",PENALITES,"penalites_reclamees");renderConsequences();
+let currentScreen=0;
+function updateProgress(){const pct=currentScreen===0?0:Math.min(100,(currentScreen/5)*100);document.getElementById("progressBar").style.width=pct+"%";}
+function goTo(n){document.querySelectorAll(".screen").forEach(s=>s.classList.remove("active"));document.querySelector(`.screen[data-screen="${n}"]`).classList.add("active");currentScreen=n;updateProgress();const nav=document.getElementById("stepNav");nav.style.display=(n===0||n===6)?"none":"flex";document.getElementById("btnBack").style.display=(n<=1)?"none":"block";document.getElementById("btnNext").textContent=(n===5)?"Voir mon résultat →":"Continuer";window.scrollTo(0,0);}
+function validateStep(n){switch(n){case 1:if(!state.secteur||!state.taille){alert("Merci de compléter les deux champs.");return false;}return true;case 2:if(!state.type_client){alert("Merci de sélectionner un type de client.");return false;}return true;case 3:if(!state.montant_ht||state.montant_ht<=0){alert("Merci d'indiquer un montant HT valide.");return false;}if(!state.date_reception){alert("Merci d'indiquer la date de réception.");return false;}if(!state.date_echeance){alert("Merci d'indiquer la date d'échéance.");return false;}if(!state.toujours_impaye&&!state.date_paiement){alert("Indiquez la date de paiement ou cochez 'toujours impayé'.");return false;}return true;case 5:if(!state.consentement){document.getElementById("consentError").style.display="block";return false;}return true;default:return true;}}
+function nextStep(){if(!validateStep(currentScreen))return;if(currentScreen===5){submitResponse();return;}goTo(currentScreen+1);}
+function prevStep(){goTo(currentScreen-1);}
+function applyDefaultDelai(typeClient,regime){const select=document.getElementById("delaiType");if(typeClient==="eps")select.value="50eps";else if(regime==="marche_public")select.value="30";else select.value="45fdm";onDelaiChange();}
+function parseDate(str){if(!str)return null;const[y,m,d]=str.split("-").map(Number);return new Date(Date.UTC(y,m-1,d));}
+function fmtDate(dt){return dt.toISOString().slice(0,10);}
+function addDays(dt,n){const d=new Date(dt);d.setUTCDate(d.getUTCDate()+n);return d;}
+function endOfMonth(dt){return new Date(Date.UTC(dt.getUTCFullYear(),dt.getUTCMonth()+1,0));}
+function computeEcheance(){const reception=parseDate(state.date_reception);if(!reception)return null;const type=state.delai_type;if(type==="30")return addDays(reception,30);if(type==="60")return addDays(reception,60);if(type==="50eps")return addDays(reception,50);if(type==="45fdm")return endOfMonth(addDays(reception,45));if(type==="autre")return addDays(reception,Number(state.delai_autre_jours||0));return reception;}
+function onDelaiChange(){document.getElementById("delaiAutreWrap").style.display=state.delai_type==="autre"?"flex":"none";const ech=computeEcheance();if(ech){state.date_echeance=fmtDate(ech);document.getElementById("dateEcheance").value=state.date_echeance;}recalc();}
+document.getElementById("montantHT").addEventListener("input",e=>{state.montant_ht=parseFloat(e.target.value)||0;recalc();});
+document.getElementById("dateReception").addEventListener("change",e=>{state.date_reception=e.target.value;onDelaiChange();});
+document.getElementById("delaiType").addEventListener("change",e=>{state.delai_type=e.target.value;onDelaiChange();});
+document.getElementById("delaiAutreJours").addEventListener("input",e=>{state.delai_autre_jours=e.target.value;onDelaiChange();});
+document.getElementById("dateEcheance").addEventListener("change",e=>{state.date_echeance=e.target.value;recalc();});
+document.getElementById("datePaiement").addEventListener("change",e=>{state.date_paiement=e.target.value;recalc();});
+document.getElementById("toujoursImpaye").addEventListener("change",e=>{state.toujours_impaye=e.target.checked;document.getElementById("datePaiement").disabled=e.target.checked;if(e.target.checked){document.getElementById("datePaiement").value="";state.date_paiement=null;}recalc();});
+document.getElementById("nomDonneur").addEventListener("input",e=>{state.nom_donneur=e.target.value;});
+document.getElementById("contactEmail").addEventListener("input",e=>{state.email=e.target.value;});
+document.getElementById("contactTel").addEventListener("input",e=>{state.telephone=e.target.value;});
+document.getElementById("consentement").addEventListener("change",e=>{state.consentement=e.target.checked;document.getElementById("consentRow").classList.toggle("selected",e.target.checked);document.getElementById("consentError").style.display="none";});
+function getSemestres(){return Object.entries(TAUX_TABLE).filter(([k])=>!k.startsWith("_")).map(([key,v])=>({key,...v,debut:parseDate(v.date_debut),fin:parseDate(v.date_fin)})).sort((a,b)=>a.debut-b.debut);}
+function calculerInterets({montant_ht,date_echeance,date_fin_retard,regime_juridique}){const echeance=parseDate(date_echeance);const finRetard=parseDate(date_fin_retard);if(!echeance||!finRetard||!montant_ht){return{jours_retard:0,interets:0,indemnite:INDEMNITE_FORFAITAIRE,total:INDEMNITE_FORFAITAIRE,taux_moyen:0,base_legale:"—",detail:""};}const debutRetard=addDays(echeance,1);if(finRetard<debutRetard){return{jours_retard:0,interets:0,indemnite:INDEMNITE_FORFAITAIRE,total:INDEMNITE_FORFAITAIRE,taux_moyen:0,base_legale:"—",detail:"Aucun retard constaté."};}const semestres=getSemestres();let interetsTotal=0;let joursTotal=0;const detailParts=[];for(const s of semestres){const ovStart=debutRetard>s.debut?debutRetard:s.debut;const ovEnd=finRetard<s.fin?finRetard:s.fin;if(ovStart>ovEnd)continue;const jours=Math.round((ovEnd-ovStart)/86400000)+1;let taux=regime_juridique==="marche_public"?s.taux_public:s.taux_prive;if(regime_juridique==="b2b_prive")taux=Math.max(taux,PLANCHER_PRIVE);const interetsSemestre=montant_ht*(taux/100)*(jours/365);interetsTotal+=interetsSemestre;joursTotal+=jours;detailParts.push(`${jours} j × ${taux.toFixed(2)}% (${s.key})`);}const baseLegale=regime_juridique==="marche_public"?"Taux BCE + 8 pts — art. R.2192-31 CCP":"Taux BCE + 10 pts (plancher 8,25%) — art. L.441-10 C. com.";const tauxMoyen=joursTotal>0?(interetsTotal*365*100)/(montant_ht*joursTotal):0;return{jours_retard:joursTotal,interets:Math.round(interetsTotal*100)/100,indemnite:INDEMNITE_FORFAITAIRE,total:Math.round((interetsTotal+INDEMNITE_FORFAITAIRE)*100)/100,taux_moyen:Math.round(tauxMoyen*100)/100,base_legale:baseLegale,detail:`Retard de ${joursTotal} j × montant HT ${montant_ht.toFixed(2)} € / 365 = ${interetsTotal.toFixed(2)} € + 40,00 € d'indemnité forfaitaire`};}
+let lastResult=null;
+function recalc(){if(!state.montant_ht||!state.date_echeance){document.getElementById("outJours").textContent="0 j";document.getElementById("outTaux").textContent="—";document.getElementById("outInterets").textContent="0,00 €";document.getElementById("outTotal").textContent="0,00 €";return;}const impaye=state.toujours_impaye||!state.date_paiement;const finRetard=impaye?fmtDate(new Date()):state.date_paiement;const res=calculerInterets({montant_ht:state.montant_ht,date_echeance:state.date_echeance,date_fin_retard:finRetard,regime_juridique:state.regime_juridique||"b2b_prive"});lastResult=res;document.getElementById("outJours").textContent=res.jours_retard+" j";document.getElementById("outTaux").textContent=res.taux_moyen.toFixed(2)+" %";document.getElementById("outBaseLegale").textContent=res.base_legale;document.getElementById("outInterets").textContent=res.interets.toFixed(2).replace(".",",")+" €";document.getElementById("outTotal").textContent=res.total.toFixed(2).replace(".",",")+" €";document.getElementById("outStatutLabel").textContent=impaye?"Total réclamable (provisoire)":"Total réclamable";document.getElementById("outProvisoire").style.display=impaye?"block":"none";document.getElementById("outDetailFormule").textContent=res.detail;}
+const WEBHOOK_URL="https://script.google.com/macros/s/AKfycbwc7jhelxGJ6oKb0UarApZ6irwL9Z_MhrpesfECFnHstFEODIkyyB1_uCgXife80GnM0Q/exec";
+function buildPayload(){const impaye=state.toujours_impaye||!state.date_paiement;const finRetard=impaye?fmtDate(new Date()):state.date_paiement;const res=calculerInterets({montant_ht:state.montant_ht,date_echeance:state.date_echeance,date_fin_retard:finRetard,regime_juridique:state.regime_juridique});return{horodatage:new Date().toISOString(),secteur:state.secteur,taille_entreprise:state.taille,type_client:state.type_client,regime_juridique:state.regime_juridique,nom_donneur:state.nom_donneur,montant_ht:state.montant_ht,date_reception:state.date_reception,delai_type:state.delai_type,delai_jours_personnalise:state.delai_autre_jours||null,date_echeance:state.date_echeance,date_paiement:state.toujours_impaye?null:state.date_paiement,toujours_impaye:state.toujours_impaye,frequence_retards:state.frequence_retards,penalites_reclamees:state.penalites_reclamees,consequences:state.consequences,email:state.email,telephone:state.telephone,consentement:state.consentement,resultat_calcul:{jours_retard:res.jours_retard,taux_moyen_pct:res.taux_moyen,base_legale:res.base_legale,interets_moratoires:res.interets,indemnite_forfaitaire:res.indemnite,total_reclamable:res.total,statut:impaye?"provisoire":"definitif"}};}
+function submitResponse(){const payload=buildPayload();lastResult=payload.resultat_calcul;document.getElementById("resultAmount").textContent=lastResult.total_reclamable.toFixed(2).replace(".",",")+" €";document.getElementById("resultStatut").textContent=lastResult.statut==="provisoire"?"Montant provisoire réclamable":"Montant total réclamable";document.getElementById("resJours").textContent=lastResult.jours_retard+" jours";document.getElementById("resInterets").textContent=lastResult.interets_moratoires.toFixed(2).replace(".",",")+" €";document.getElementById("resDetail").textContent=`Taux appliqué : ${lastResult.taux_moyen_pct.toFixed(2)}% — ${lastResult.base_legale}`;goTo(6);fetch(WEBHOOK_URL,{method:"POST",mode:"no-cors",headers:{"Content-Type":"text/plain;charset=utf-8"},body:JSON.stringify(payload)}).catch(err=>console.warn("Webhook indisponible :",err));}
+function restartForNewInvoice(){state.type_client=null;state.regime_juridique=null;state.nom_donneur="";state.montant_ht=null;state.date_reception=null;state.delai_type="30";state.date_echeance=null;state.date_paiement=null;state.toujours_impaye=false;document.getElementById("nomDonneur").value="";document.getElementById("montantHT").value="";document.getElementById("dateReception").value="";document.getElementById("dateEcheance").value="";document.getElementById("datePaiement").value="";document.getElementById("toujoursImpaye").checked=false;document.getElementById("datePaiement").disabled=false;document.querySelectorAll("#clientGrid .choice-btn").forEach(b=>b.classList.remove("selected"));recalc();goTo(2);}
 updateProgress();
 </script>
 </body>
