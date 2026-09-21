@@ -1,0 +1,26 @@
+{
+  "_instructions": "Fichier de configuration des taux semestriels. A mettre a jour par l'administrateur FRBTP DEUX FOIS PAR AN, au 1er janvier et au 1er juillet. Cle du semestre au format AAAA-S1 ou AAAA-S2. Ne jamais supprimer un semestre passe.",
+  "_comment_taux_public": "taux_public = refi_bce + 8 points (article R.2192-31 du Code de la commande publique)",
+  "_comment_taux_prive": "taux_prive = refi_bce + 10 points (article L.441-10 du Code de commerce), avec plancher 8.25% gere dans le JS",
+  "2025-S2": {
+    "refi_bce": 2.15,
+    "taux_prive": 12.15,
+    "taux_public": 10.15,
+    "date_debut": "2025-07-01",
+    "date_fin": "2025-12-31"
+  },
+  "2026-S1": {
+    "refi_bce": 2.15,
+    "taux_prive": 12.15,
+    "taux_public": 10.15,
+    "date_debut": "2026-01-01",
+    "date_fin": "2026-06-30"
+  },
+  "2026-S2": {
+    "refi_bce": 2.4,
+    "taux_prive": 12.4,
+    "taux_public": 10.4,
+    "date_debut": "2026-07-01",
+    "date_fin": "2026-12-31"
+  }
+}

@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Dashboard admin — Baromètre FRBTP</title>
+<style>
+  body{font-family:-apple-system,Arial,sans-serif;background:#f4f6f8;margin:0;color:#1c2733;}
+  .lock{max-width:340px;margin:80px auto;background:#fff;padding:28px;border-radius:12px;box-shadow:0 4px 20px rgba(0,0,0,.08);text-align:center;}
+  .lock input{width:100%;padding:12px;font-size:15px;border:1.5px solid #c9d4dd;border-radius:8px;margin:12px 0;}
+  .lock button{width:100%;padding:12px;background:#ff6a13;color:#fff;border:none;border-radius:8px;font-weight:700;cursor:pointer;}
+  header{background:#0b3d63;color:#fff;padding:16px 24px;font-weight:700;}
+  main{max-width:1000px;margin:0 auto;padding:24px;}
+  table{width:100%;border-collapse:collapse;background:#fff;border-radius:10px;overflow:hidden;box-shadow:0 2px 10px rgba(0,0,0,.05);}
+  th,td{padding:12px 14px;text-align:left;font-size:13.5px;border-bottom:1px solid #eef1f4;}
+  th{background:#eaf2f8;color:#0b3d63;}
+  .kpi-row{display:flex;gap:14px;margin-bottom:20px;flex-wrap:wrap;}
+  .kpi{flex:1;min-width:160px;background:#fff;border-radius:10px;padding:14px;box-shadow:0 2px 10px rgba(0,0,0,.05);}
+  .kpi .val{font-size:22px;font-weight:800;color:#ff6a13;}
+  .kpi .lbl{font-size:12px;color:#6b7684;}
+  .export-btn{background:#0b3d63;color:#fff;border:none;padding:10px 16px;border-radius:8px;cursor:pointer;font-weight:700;margin-bottom:16px;}
+  #app{display:none;}
+</style>
+</head>
+<body>
+
+<div class="lock" id="lockScreen">
+  <h2>Dashboard FRBTP</h2>
+  <p style="font-size:13px;color:#6b7684;">Accès réservé à l'administrateur</p>
+  <input type="password" id="pwd" placeholder="Mot de passe">
+  <button onclick="checkPwd()">Accéder</button>
+  <div id="pwdError" style="color:#c0392b;font-size:12px;margin-top:6px;"></div>
+</div>
+
+<div id="app">
+  <header>Baromètre des délais de paiement — Suivi Charte départementale</header>
+  <main>
+    <div class="kpi-row" id="kpiRow"></div>
+    <button class="export-btn" onclick="exportCSV()">Exporter en CSV (réimportable Excel)</button>
+    <table>
+      <thead>
+        <tr><th>Type de donneur d'ordre</th><th>Nb réponses</th><th>Délai réel moyen (j)</th><th>Total intérêts dus (€)</th><th>Moyenne / dossier (€)</th><th>% hors délai légal</th></tr>
+      </thead>
+      <tbody id="statsBody"></tbody>
+    </table>
+  </main>
+</div>
+
+<script>
+const DASHBOARD_PASSWORD = "frbtp2026";
+const WEBHOOK_URL = "https://script.google.com/macros/s/REMPLACER_PAR_ID_DEPLOIEMENT/exec";
+
+const CLIENT_LABELS = {
+  etat: "État / services déconcentrés", ctg: "CTG", commune_epci: "Communes / EPCI",
+  bailleur: "Bailleurs sociaux / OPH", eps: "Établissements publics de santé",
+  grand_compte: "Grands comptes privés", particulier: "Particuliers", sous_traitance: "Sous-traitance BTP"
+};
+
+function checkPwd(){
+  const val = document.getElementById("pwd").value;
+  if(val === DASHBOARD_PASSWORD){
+    document.getElementById("lockScreen").style.display = "none";
+    document.getElementById("app").style.display = "block";
+    loadStats();
+  } else {
+    document.getElementById("pwdError").textContent = "Mot de passe incorrect.";
+  }
+}
+
+async function loadStats(){
+  try{
+    const res = await fetch(WEBHOOK_URL + "?action=stats");
+    const data = await res.json();
+    renderKpis(data);
+    renderTable(data.stats);
+  }catch(err){
+    document.getElementById("statsBody").innerHTML = `<tr><td colspan="6">Impossible de charger les données (webhook non configuré ou hors ligne).</td></tr>`;
+  }
+}
+
+function renderKpis(data){
+  const totalReponses = data.total_reponses || 0;
+  const totalInterets = data.stats.reduce((s,r)=>s+r.total_interets_du,0);
+  const pctHorsDelaiMoyen = data.stats.length
+    ? Math.round(data.stats.reduce((s,r)=>s+r.pct_depassement_delai_legal,0)/data.stats.length*10)/10
+    : 0;
+
+  document.getElementById("kpiRow").innerHTML = `
+    <div class="kpi"><div class="val">${totalReponses}</div><div class="lbl">Réponses collectées</div></div>
+    <div class="kpi"><div class="val">${totalInterets.toLocaleString("fr-FR",{maximumFractionDigits:0})} €</div><div class="lbl">Intérêts moratoires théoriques cumulés</div></div>
+    <div class="kpi"><div class="val">${pctHorsDelaiMoyen} %</div><div class="lbl">Réponses en dépassement du délai légal</div></div>
+  `;
+}
+
+function renderTable(stats){
+  document.getElementById("statsBody").innerHTML = stats.map(r => `
+    <tr>
+      <td>${CLIENT_LABELS[r.type_client] || r.type_client}</td>
+      <td>${r.nb_reponses}</td>
+      <td>${r.delai_retard_moyen_jours}</td>
+      <td>${r.total_interets_du.toLocaleString("fr-FR")}</td>
+      <td>${r.moyenne_interets_du.toLocaleString("fr-FR")}</td>
+      <td>${r.pct_depassement_delai_legal} %</td>
+    </tr>
+  `).join("");
+}
+
+function exportCSV(){
+  window.open(WEBHOOK_URL + "?action=csv", "_blank");
+}
+</script>
+</body>
+</html>
