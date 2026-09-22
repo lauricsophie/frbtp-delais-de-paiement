@@ -1,95 +1,82 @@
 /**
- * Google Apps Script — Récepteur des soumissions du Baromètre FRBTP
- * Déploiement : Extensions > Apps Script sur un Google Sheet vide,
- * coller ce code, puis Déployer > Nouveau déploiement > Application Web
- * (Exécuter en tant que "Moi", accès "Tout le monde").
+ * FRBTP — Délais de paiement — Backend anonymisé
+ * Ne stocke aucune donnée nominative d'entreprise (ni nom, ni SIRET).
+ * Regroupement des factures d'une même saisie via un idSession (UUID) technique,
+ * sans lien avec une identité réelle.
  */
 
-const SHEET_NAME = "Reponses";
-
-const COLUMNS = [
-  "horodatage","secteur","taille_entreprise","type_client","regime_juridique","nom_donneur",
-  "montant_ht","date_reception","delai_type","delai_jours_personnalise","date_echeance",
-  "date_paiement","toujours_impaye","frequence_retards","penalites_reclamees","consequences",
-  "email","telephone","consentement",
-  "jours_retard","taux_moyen_pct","base_legale","interets_moratoires","indemnite_forfaitaire",
-  "total_reclamable","statut"
-];
-
-function getSheet_() {
-  const ss = SpreadsheetApp.getActiveSpreadsheet();
-  let sheet = ss.getSheetByName(SHEET_NAME);
-  if (!sheet) {
-    sheet = ss.insertSheet(SHEET_NAME);
-    sheet.appendRow(COLUMNS);
-    sheet.setFrozenRows(1);
-  }
-  return sheet;
-}
+const SHEET_ID = 'REMPLACER_PAR_ID_DU_GOOGLE_SHEET';
+const SHEET_NAME = 'Signalements';
 
 function doPost(e) {
+  const lock = LockService.getScriptLock();
+  lock.waitLock(15000);
   try {
-    const payload = JSON.parse(e.postData.contents);
-    const r = payload.resultat_calcul || {};
-    const sheet = getSheet_();
+    const data = JSON.parse(e.postData.contents);
+    const sheet = SpreadsheetApp.openById(SHEET_ID).getSheetByName(SHEET_NAME);
 
-    const row = [
-      payload.horodatage || new Date().toISOString(),
-      payload.secteur, payload.taille_entreprise, payload.type_client, payload.regime_juridique,
-      payload.nom_donneur || "",
-      payload.montant_ht, payload.date_reception, payload.delai_type, payload.delai_jours_personnalise || "",
-      payload.date_echeance, payload.date_paiement || "", payload.toujours_impaye,
-      payload.frequence_retards || "", payload.penalites_reclamees || "",
-      (payload.consequences || []).join(";"),
-      payload.email || "", payload.telephone || "", payload.consentement,
-      r.jours_retard, r.taux_moyen_pct, r.base_legale, r.interets_moratoires,
-      r.indemnite_forfaitaire, r.total_reclamable, r.statut
-    ];
-    sheet.appendRow(row);
+    if (!Array.isArray(data.factures) || data.factures.length === 0) {
+      return jsonResponse({ status: 'error', message: 'Aucune facture recue' });
+    }
 
-    return ContentService.createTextOutput(JSON.stringify({ ok: true }))
-      .setMimeType(ContentService.MimeType.JSON);
+    data.factures.forEach(f => {
+      const dateEcheance = new Date(f.dateEcheance);
+      const aujourdHui = new Date();
+      const joursRetard = f.statut === 'en_attente'
+        ? Math.max(0, Math.floor((aujourdHui - dateEcheance) / 86400000))
+        : '';
+
+      sheet.appendRow([
+        data.idSession,
+        data.horodatage,
+        data.secteur,
+        data.effectif,
+        data.zone,
+        data.donneurOrdre,
+        data.typeDonneurOrdre,
+        f.reference || '',
+        f.dateEmission,
+        f.dateEcheance,
+        f.montant,
+        f.statut,
+        joursRetard
+      ]);
+    });
+
+    return jsonResponse({ status: 'ok', factures_enregistrees: data.factures.length });
   } catch (err) {
-    return ContentService.createTextOutput(JSON.stringify({ ok: false, error: err.message }))
-      .setMimeType(ContentService.MimeType.JSON);
+    return jsonResponse({ status: 'error', message: err.message });
+  } finally {
+    lock.releaseLock();
   }
 }
 
 function doGet(e) {
-  const action = (e.parameter.action || "stats");
-  const sheet = getSheet_();
-  const data = sheet.getDataRange().getValues();
-  const headers = data.shift();
-
-  if (action === "csv") {
-    const csv = [headers.join(",")].concat(
-      data.map(row => row.map(v => `"${String(v).replace(/"/g,'""')}"`).join(","))
-    ).join("\n");
-    return ContentService.createTextOutput(csv).setMimeType(ContentService.MimeType.CSV);
+  if (e.parameter.action === 'liste_donneurs') {
+    const sheet = SpreadsheetApp.openById(SHEET_ID).getSheetByName(SHEET_NAME);
+    const values = sheet.getDataRange().getValues();
+    const colDonneurOrdre = 5;
+    const set = new Set();
+    for (let i = 1; i < values.length; i++) {
+      if (values[i][colDonneurOrdre]) set.add(values[i][colDonneurOrdre]);
+    }
+    return jsonResponse([...set].sort());
   }
+  return jsonResponse({ status: 'ok', message: 'API FRBTP delais de paiement' });
+}
 
-  const idx = name => headers.indexOf(name);
-  const stats = {};
-
-  data.forEach(row => {
-    const client = row[idx("type_client")];
-    if (!client) return;
-    if (!stats[client]) stats[client] = { count: 0, sum_jours: 0, sum_total: 0, depassements: 0 };
-    stats[client].count++;
-    stats[client].sum_jours += Number(row[idx("jours_retard")]) || 0;
-    stats[client].sum_total += Number(row[idx("total_reclamable")]) || 0;
-    if ((Number(row[idx("jours_retard")]) || 0) > 0) stats[client].depassements++;
-  });
-
-  const result = Object.entries(stats).map(([client, s]) => ({
-    type_client: client,
-    nb_reponses: s.count,
-    delai_retard_moyen_jours: Math.round(s.sum_jours / s.count),
-    total_interets_du: Math.round(s.sum_total * 100) / 100,
-    moyenne_interets_du: Math.round((s.sum_total / s.count) * 100) / 100,
-    pct_depassement_delai_legal: Math.round((s.depassements / s.count) * 1000) / 10
-  }));
-
-  return ContentService.createTextOutput(JSON.stringify({ ok: true, stats: result, total_reponses: data.length }))
+function jsonResponse(obj) {
+  return ContentService.createTextOutput(JSON.stringify(obj))
     .setMimeType(ContentService.MimeType.JSON);
 }
+
+/*
+ NOTE POUR L'INTEGRATION :
+ - Le calcul des penalites de retard base sur taux.json (taux d'interet legal / indemnite forfaitaire)
+   present dans la version precedente du script doit etre reintegre ici (fonction de calcul du montant
+   de penalite par facture) : le contenu exact de l'ancien apps-script.gs n'a pas pu etre recupere
+   automatiquement lors de la preparation de cette pull request. Merci de relire et fusionner avant merge.
+ - Penser a creer les en-tetes de colonnes dans l'onglet "Signalements" :
+   idSession | horodatage | secteur | effectif | zone | donneurOrdre | typeDonneurOrdre |
+   reference | dateEmission | dateEcheance | montant | statut | joursRetard
+*/
