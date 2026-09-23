@@ -149,6 +149,14 @@ p.step-desc{font-size:13.5px;color:var(--gris);line-height:1.4;}
 .inline-check{display:flex;align-items:center;gap:8px;font-size:13px;color:var(--bleu-fonce);font-weight:600;}
 .inline-check input{width:18px;height:18px;}
 
+.facture-recap{
+  background:#fff;border:1.5px solid #c9d4dd;border-radius:var(--radius);
+  padding:12px 14px;font-size:12.5px;color:var(--gris);
+}
+.facture-recap .item{display:flex;justify-content:space-between;padding:4px 0;border-bottom:1px dashed #e1e6ea;}
+.facture-recap .item:last-child{border-bottom:none;}
+.facture-recap .item b{color:#1c2733;}
+
 nav.step-nav{
   position:fixed;bottom:0;left:0;right:0;
   background:#fff;border-top:1px solid #e1e6ea;
@@ -218,14 +226,14 @@ nav.step-nav button{
       <p class="step-desc">
         Ce baromètre, issu de la <b>Charte départementale relative aux délais de paiement et à la commande publique</b> signée par la FRBTP en octobre 2025, permet d'objectiver la situation réelle des entreprises guyanaises et de calculer automatiquement les intérêts moratoires légalement dus.
       </p>
-      <p class="step-desc" style="font-size:11.5px;">Sans création de compte. Réponses anonymisées à usage statistique. Durée : 3 à 4 minutes.</p>
+      <p class="step-desc" style="font-size:11.5px;">Sans création de compte. Réponses anonymisées à usage statistique. Vous pouvez déclarer plusieurs factures pour un même donneur d'ordre en une seule fois. Durée : 3 à 4 minutes.</p>
       <button class="start-btn" onclick="goTo(1)">Commencer →</button>
     </div>
   </section>
 
   <section class="screen" data-screen="1">
     <h1 class="step-title">Votre entreprise</h1>
-    <p class="step-desc">Deux questions rapides pour situer votre activité.</p>
+    <p class="step-desc">Deux questions rapides pour situer votre activité. Aucune information nominative n'est demandée.</p>
 
     <div class="field-group">
       <label>Secteur d'activité</label>
@@ -240,10 +248,10 @@ nav.step-nav button{
 
   <section class="screen" data-screen="2">
     <h1 class="step-title">Le donneur d'ordre concerné</h1>
-    <p class="step-desc">Vous pourrez répondre plusieurs fois pour déclarer plusieurs factures / clients différents.</p>
+    <p class="step-desc">Vous pourrez déclarer plusieurs factures en retard pour ce même donneur d'ordre à l'étape suivante, sans tout ressaisir.</p>
 
     <div class="field-group">
-      <label>Type de client pour cette facture</label>
+      <label>Type de client pour ces factures</label>
       <div class="choice-grid single-col" id="clientGrid"></div>
     </div>
 
@@ -254,7 +262,12 @@ nav.step-nav button{
   </section>
 
   <section class="screen" data-screen="3">
-    <h1 class="step-title">La facture concernée</h1>
+    <h1 class="step-title">Facture <span id="factureCompteur">1</span> — ce donneur d'ordre</h1>
+
+    <div class="facture-recap" id="factureRecap" style="display:none;">
+      <div style="font-weight:700;color:var(--bleu-fonce);margin-bottom:4px;">Déjà enregistrées pour ce donneur d'ordre :</div>
+      <div id="factureRecapList"></div>
+    </div>
 
     <div class="field-group">
       <label>Montant HT de la facture (€)</label>
@@ -314,8 +327,24 @@ nav.step-nav button{
     </div>
   </section>
 
+  <section class="screen" data-screen="3b">
+    <h1 class="step-title">Facture enregistrée ✓</h1>
+    <p class="step-desc">Avez-vous une <b>autre facture en retard chez ce même donneur d'ordre</b> à déclarer ? Vous n'aurez pas à ressaisir son identité.</p>
+
+    <div class="facture-recap" id="factureRecap3b">
+      <div style="font-weight:700;color:var(--bleu-fonce);margin-bottom:4px;">Récapitulatif pour ce donneur d'ordre :</div>
+      <div id="factureRecapList3b"></div>
+    </div>
+
+    <div class="choice-grid single-col">
+      <button type="button" class="choice-btn" onclick="ajouterAutreFacture()">Oui, ajouter une autre facture pour ce donneur d'ordre</button>
+      <button type="button" class="choice-btn" onclick="terminerDonneurOrdre()">Non, continuer</button>
+    </div>
+  </section>
+
   <section class="screen" data-screen="4">
     <h1 class="step-title">Répétition et contexte</h1>
+    <p class="step-desc">Ces questions portent sur votre relation globale avec ce donneur d'ordre (toutes les factures déclarées à l'étape précédente).</p>
 
     <div class="field-group">
       <label>Fréquence des retards sur les 12 derniers mois avec ce type de client</label>
@@ -359,9 +388,7 @@ nav.step-nav button{
     <div class="big-amount" id="resultAmount">0,00 €</div>
 
     <div class="result-card">
-      <div class="row" style="display:flex;justify-content:space-between;margin-bottom:6px;"><span>Retard constaté</span><b id="resJours">0 jours</b></div>
-      <div class="row" style="display:flex;justify-content:space-between;margin-bottom:6px;"><span>Intérêts moratoires</span><b id="resInterets">0,00 €</b></div>
-      <div class="row" style="display:flex;justify-content:space-between;margin-bottom:6px;"><span>Indemnité forfaitaire</span><b>40,00 €</b></div>
+      <div id="resFacturesList"></div>
       <div style="font-size:11.5px;color:var(--gris);margin-top:8px;" id="resDetail"></div>
     </div>
 
@@ -369,7 +396,7 @@ nav.step-nav button{
       La FRBTP peut vous accompagner dans vos démarches de réclamation auprès des donneurs d'ordre publics, y compris via le <b>Médiateur des entreprises</b>. Ces données alimentent le suivi des engagements pris dans la Charte départementale des délais de paiement.
     </p>
 
-    <button class="restart-link" onclick="restartForNewInvoice()">Déclarer une autre facture / un autre client →</button>
+    <button class="restart-link" onclick="restartForNewDonneur()">Déclarer un autre donneur d'ordre →</button>
   </section>
 
 </main>
@@ -393,13 +420,23 @@ fetch('./taux.json').then(r => { if(!r.ok) throw 0; return r.json(); })
 const PLANCHER_PRIVE = 8.25;
 const INDEMNITE_FORFAITAIRE = 40;
 
+function uuidv4() {
+  return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, c => {
+    const r = Math.random() * 16 | 0;
+    const v = c === 'x' ? r : (r & 0x3 | 0x8);
+    return v.toString(16);
+  });
+}
+
 const state = {
+  idSession: uuidv4(),
   secteur: null, taille: null,
   type_client: null, nom_donneur: "",
   montant_ht: null, date_reception: null, delai_type: "30", delai_autre_jours: null,
   date_echeance: null, date_paiement: null, toujours_impaye: false,
   frequence_retards: null, penalites_reclamees: null, consequences: [],
-  email: "", telephone: "", consentement: false
+  email: "", telephone: "", consentement: false,
+  factures: []
 };
 
 const SECTEURS = [
@@ -494,42 +531,64 @@ renderChoiceGrid("freqGrid", FREQUENCES, "frequence_retards");
 renderChoiceGrid("penalitesGrid", PENALITES, "penalites_reclamees");
 renderConsequences();
 
-let currentScreen = 0;
+const SCREEN_ORDER = ["0","1","2","3","3b","4","5","6"];
+let currentScreen = "0";
+
+function screenIndex(n){ return SCREEN_ORDER.indexOf(String(n)); }
 
 function updateProgress(){
-  const pct = currentScreen === 0 ? 0 : Math.min(100, (currentScreen / 5) * 100);
+  const idx = screenIndex(currentScreen);
+  const pct = idx <= 0 ? 0 : Math.min(100, (idx / (SCREEN_ORDER.length - 2)) * 100);
   document.getElementById("progressBar").style.width = pct + "%";
 }
 
 function goTo(n){
+  n = String(n);
   document.querySelectorAll(".screen").forEach(s => s.classList.remove("active"));
   document.querySelector(`.screen[data-screen="${n}"]`).classList.add("active");
   currentScreen = n;
   updateProgress();
   const nav = document.getElementById("stepNav");
-  nav.style.display = (n === 0 || n === 6) ? "none" : "flex";
-  document.getElementById("btnBack").style.display = (n <= 1) ? "none" : "block";
-  document.getElementById("btnNext").textContent = (n === 5) ? "Voir mon résultat →" : "Continuer";
+  nav.style.display = (n === "0" || n === "6" || n === "3b") ? "none" : "flex";
+  document.getElementById("btnBack").style.display = (n === "1") ? "none" : "block";
+  document.getElementById("btnNext").textContent = (n === "5") ? "Voir mon résultat →" : "Continuer";
+  if(n === "3b") renderRecap("factureRecapList3b");
+  if(n === "3") renderRecap("factureRecapList");
   window.scrollTo(0,0);
 }
 
+function renderRecap(targetId){
+  const target = document.getElementById(targetId);
+  const wrap = targetId === "factureRecapList" ? document.getElementById("factureRecap") : null;
+  if(state.factures.length === 0){
+    if(wrap) wrap.style.display = "none";
+    target.innerHTML = "<div class='item'>Aucune facture enregistrée pour l'instant.</div>";
+    return;
+  }
+  if(wrap) wrap.style.display = "block";
+  document.getElementById("factureCompteur").textContent = state.factures.length + 1;
+  target.innerHTML = state.factures.map((f,i) => `
+    <div class="item"><span>Facture ${i+1} — ${f.montant_ht.toFixed(2)} € HT</span><b>${f.resultat_calcul.jours_retard} j — ${f.resultat_calcul.total.toFixed(2)} €</b></div>
+  `).join("");
+}
+
 function validateStep(n){
-  switch(n){
-    case 1:
+  switch(String(n)){
+    case "1":
       if(!state.secteur || !state.taille){ alert("Merci de compléter les deux champs."); return false; }
       return true;
-    case 2:
+    case "2":
       if(!state.type_client){ alert("Merci de sélectionner un type de client."); return false; }
       return true;
-    case 3:
+    case "3":
       if(!state.montant_ht || state.montant_ht <= 0){ alert("Merci d'indiquer un montant HT valide."); return false; }
       if(!state.date_reception){ alert("Merci d'indiquer la date de réception de la facture."); return false; }
       if(!state.date_echeance){ alert("Merci d'indiquer la date d'échéance."); return false; }
       if(!state.toujours_impaye && !state.date_paiement){ alert("Indiquez la date de paiement effectif, ou cochez 'toujours impayé'."); return false; }
       return true;
-    case 4:
+    case "4":
       return true;
-    case 5:
+    case "5":
       if(!state.consentement){
         document.getElementById("consentError").style.display = "block";
         return false;
@@ -541,10 +600,67 @@ function validateStep(n){
 
 function nextStep(){
   if(!validateStep(currentScreen)) return;
-  if(currentScreen === 5){ submitResponse(); return; }
-  goTo(currentScreen + 1);
+  if(currentScreen === "3"){ enregistrerFactureCourante(); goTo("3b"); return; }
+  if(currentScreen === "5"){ submitResponse(); return; }
+  const idx = screenIndex(currentScreen);
+  goTo(SCREEN_ORDER[idx + 1]);
 }
-function prevStep(){ goTo(currentScreen - 1); }
+function prevStep(){
+  const idx = screenIndex(currentScreen);
+  goTo(SCREEN_ORDER[Math.max(0, idx - 1)]);
+}
+
+function resetChampsFacture(){
+  state.montant_ht = null; state.date_reception = null; state.delai_type = "30";
+  state.date_echeance = null; state.date_paiement = null; state.toujours_impaye = false;
+  document.getElementById("montantHT").value = "";
+  document.getElementById("dateReception").value = "";
+  document.getElementById("delaiType").value = "30";
+  document.getElementById("delaiAutreWrap").style.display = "none";
+  document.getElementById("dateEcheance").value = "";
+  document.getElementById("datePaiement").value = "";
+  document.getElementById("toujoursImpaye").checked = false;
+  document.getElementById("datePaiement").disabled = false;
+  recalc();
+}
+
+function enregistrerFactureCourante(){
+  const impaye = state.toujours_impaye || !state.date_paiement;
+  const finRetard = impaye ? fmtDate(new Date()) : state.date_paiement;
+  const res = calculerInterets({
+    montant_ht: state.montant_ht,
+    date_echeance: state.date_echeance,
+    date_fin_retard: finRetard,
+    regime_juridique: state.regime_juridique
+  });
+  state.factures.push({
+    montant_ht: state.montant_ht,
+    date_reception: state.date_reception,
+    delai_type: state.delai_type,
+    delai_jours_personnalise: state.delai_autre_jours || null,
+    date_echeance: state.date_echeance,
+    date_paiement: state.toujours_impaye ? null : state.date_paiement,
+    toujours_impaye: state.toujours_impaye,
+    resultat_calcul: {
+      jours_retard: res.jours_retard,
+      taux_moyen_pct: res.taux_moyen,
+      base_legale: res.base_legale,
+      interets_moratoires: res.interets,
+      indemnite_forfaitaire: res.indemnite,
+      total: res.total,
+      statut: impaye ? "provisoire" : "definitif"
+    }
+  });
+}
+
+function ajouterAutreFacture(){
+  resetChampsFacture();
+  goTo("3");
+}
+
+function terminerDonneurOrdre(){
+  goTo("4");
+}
 
 function applyDefaultDelai(typeClient, regime){
   const select = document.getElementById("delaiType");
@@ -687,59 +803,45 @@ function recalc(){
 const WEBHOOK_URL = "https://script.google.com/macros/s/AKfycbwc7jhelxGJ6oKb0UarApZ6irwL9Z_MhrpesfECFnHstFEODIkyyB1_uCgXife80GnM0Q/exec";
 
 function buildPayload(){
-  const impaye = state.toujours_impaye || !state.date_paiement;
-  const finRetard = impaye ? fmtDate(new Date()) : state.date_paiement;
-  const res = calculerInterets({
-    montant_ht: state.montant_ht,
-    date_echeance: state.date_echeance,
-    date_fin_retard: finRetard,
-    regime_juridique: state.regime_juridique
-  });
   return {
+    idSession: state.idSession,
     horodatage: new Date().toISOString(),
     secteur: state.secteur,
     taille_entreprise: state.taille,
     type_client: state.type_client,
     regime_juridique: state.regime_juridique,
     nom_donneur: state.nom_donneur,
-    montant_ht: state.montant_ht,
-    date_reception: state.date_reception,
-    delai_type: state.delai_type,
-    delai_jours_personnalise: state.delai_autre_jours || null,
-    date_echeance: state.date_echeance,
-    date_paiement: state.toujours_impaye ? null : state.date_paiement,
-    toujours_impaye: state.toujours_impaye,
     frequence_retards: state.frequence_retards,
     penalites_reclamees: state.penalites_reclamees,
     consequences: state.consequences,
     email: state.email,
     telephone: state.telephone,
     consentement: state.consentement,
-    resultat_calcul: {
-      jours_retard: res.jours_retard,
-      taux_moyen_pct: res.taux_moyen,
-      base_legale: res.base_legale,
-      interets_moratoires: res.interets,
-      indemnite_forfaitaire: res.indemnite,
-      total_reclamable: res.total,
-      statut: impaye ? "provisoire" : "definitif"
-    }
+    factures: state.factures
   };
 }
 
 function submitResponse(){
   const payload = buildPayload();
-  lastResult = payload.resultat_calcul;
+  const totalGlobal = state.factures.reduce((s,f) => s + f.resultat_calcul.total, 0);
+  const unProvisoire = state.factures.some(f => f.resultat_calcul.statut === "provisoire");
 
-  document.getElementById("resultAmount").textContent = lastResult.total_reclamable.toFixed(2).replace(".", ",") + " €";
-  document.getElementById("resultStatut").textContent = lastResult.statut === "provisoire"
-    ? "Montant provisoire réclamable (paiement toujours en attente)"
+  document.getElementById("resultAmount").textContent = totalGlobal.toFixed(2).replace(".", ",") + " €";
+  document.getElementById("resultStatut").textContent = unProvisoire
+    ? "Montant total réclamable (dont montants provisoires)"
     : "Montant total réclamable auprès de ce donneur d'ordre";
-  document.getElementById("resJours").textContent = lastResult.jours_retard + " jours";
-  document.getElementById("resInterets").textContent = lastResult.interets_moratoires.toFixed(2).replace(".", ",") + " €";
-  document.getElementById("resDetail").textContent = `Taux appliqué : ${lastResult.taux_moyen_pct.toFixed(2)}% — ${lastResult.base_legale}`;
 
-  goTo(6);
+  document.getElementById("resFacturesList").innerHTML = state.factures.map((f,i) => `
+    <div class="row" style="display:flex;justify-content:space-between;margin-bottom:6px;">
+      <span>Facture ${i+1} (${f.resultat_calcul.jours_retard} j de retard)</span>
+      <b>${f.resultat_calcul.total.toFixed(2).replace(".", ",")} €</b>
+    </div>
+  `).join("");
+  document.getElementById("resDetail").textContent = state.factures.length
+    ? `Base légale : ${state.factures[0].resultat_calcul.base_legale}`
+    : "";
+
+  goTo("6");
 
   fetch(WEBHOOK_URL, {
     method: "POST",
@@ -749,20 +851,18 @@ function submitResponse(){
   }).catch(err => console.warn("Webhook indisponible (mode démo) :", err));
 }
 
-function restartForNewInvoice(){
+function restartForNewDonneur(){
+  state.idSession = uuidv4();
   state.type_client = null; state.regime_juridique = null; state.nom_donneur = "";
-  state.montant_ht = null; state.date_reception = null; state.delai_type = "30";
-  state.date_echeance = null; state.date_paiement = null; state.toujours_impaye = false;
+  state.frequence_retards = null; state.penalites_reclamees = null; state.consequences = [];
+  state.factures = [];
+  resetChampsFacture();
   document.getElementById("nomDonneur").value = "";
-  document.getElementById("montantHT").value = "";
-  document.getElementById("dateReception").value = "";
-  document.getElementById("dateEcheance").value = "";
-  document.getElementById("datePaiement").value = "";
-  document.getElementById("toujoursImpaye").checked = false;
-  document.getElementById("datePaiement").disabled = false;
   document.querySelectorAll("#clientGrid .choice-btn").forEach(b => b.classList.remove("selected"));
-  recalc();
-  goTo(2);
+  document.querySelectorAll("#freqGrid .choice-btn, #penalitesGrid .choice-btn").forEach(b => b.classList.remove("selected"));
+  document.querySelectorAll("#consequencesList input").forEach(i => i.checked = false);
+  document.querySelectorAll("#consequencesList .checkbox-row").forEach(r => r.classList.remove("selected"));
+  goTo("2");
 }
 
 updateProgress();
