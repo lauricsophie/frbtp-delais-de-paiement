@@ -8,8 +8,12 @@
  * (payload.factures[]) pour un même donneur d'ordre, réunies sous un
  * idSession commun. Compatible avec les anciennes soumissions à facture
  * unique (fallback automatique).
+ *
+ * Fix : ciblage explicite du Sheet par ID via SpreadsheetApp.openById(),
+ * pour fonctionner que le script soit lié au Sheet ou autonome.
  */
 
+const SHEET_ID = "1lmhk3z8n0u_wGYdXpLC2d0TocM2XmJd7_qs0Oe2Km9g";
 const SHEET_NAME = "Reponses";
 
 const COLUMNS = [
@@ -21,8 +25,21 @@ const COLUMNS = [
   "total_reclamable","statut"
 ];
 
+function getSpreadsheet_() {
+  try {
+    if (SHEET_ID) return SpreadsheetApp.openById(SHEET_ID);
+  } catch (err) {
+    // ignore et tente le repli ci-dessous
+  }
+  const active = SpreadsheetApp.getActiveSpreadsheet();
+  if (!active) {
+    throw new Error("Impossible d'ouvrir le classeur : verifiez SHEET_ID ou liez ce script au Google Sheet.");
+  }
+  return active;
+}
+
 function getSheet_() {
-  const ss = SpreadsheetApp.getActiveSpreadsheet();
+  const ss = getSpreadsheet_();
   let sheet = ss.getSheetByName(SHEET_NAME);
   if (!sheet) {
     sheet = ss.insertSheet(SHEET_NAME);
@@ -137,4 +154,9 @@ function doGet(e) {
   return ContentService.createTextOutput(JSON.stringify({
     ok: true, stats: result, total_reponses: data.length, donneurs_recidivistes: donneursRecidivistes
   })).setMimeType(ContentService.MimeType.JSON);
+}
+
+function testConnexion() {
+  const sheet = getSheet_();
+  Logger.log("OK - Sheet trouve : " + sheet.getParent().getName() + " / onglet : " + sheet.getName());
 }
